@@ -59,7 +59,7 @@ def sort_results(results):
     return(sorted_results)
 
 def create_output_file(final_results):
-    with open("bucketObjectInfo.json","w") as f:
+    with open("output/bucketObjectInfo.json","w") as f:
         for result in final_results:
             json.dump(result,f, indent=4)
     
@@ -68,6 +68,7 @@ def create_output_file(final_results):
 Main
 '''
 results = []
+json_results = []
 
 tlo = getTopLevelObjects(client)
 for folder in tlo:
@@ -75,4 +76,5 @@ for folder in tlo:
     results.append(data)
 
 final_results = sort_results(results)
-create_output_file(final_results)
+json_results.append({'Data': final_results})
+create_output_file(json_results)
