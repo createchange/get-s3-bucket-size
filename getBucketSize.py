@@ -1,6 +1,7 @@
 import boto3
 from pprint import pprint
 import math
+import json
 
 client = boto3.client('s3')
 
@@ -51,11 +52,17 @@ def getFolderSize(client,tlo):
 
     return {'Folder':response['Prefix'].strip('/'), 'Size':obj_size_bytes, 'SubObjects': sorted_file_list}
 
-def sorted_results(results):
+def sort_results(results):
     sorted_results = sorted(results, key=lambda k: k['Size'], reverse=True)
     for item in sorted_results:
         item['Size'] = str(convert_size(item['Size']))
     return(sorted_results)
+
+def create_output_file(final_results):
+    with open("bucketObjectInfo.json","w") as f:
+        for result in final_results:
+            json.dump(result,f, indent=4)
+    
 
 '''
 Main
@@ -67,6 +74,5 @@ for folder in tlo:
     data = getFolderSize(client,folder)
     results.append(data)
 
-final_results = sorted_results(results)
-for result in final_results:
-    pprint(result)
+final_results = sort_results(results)
+create_output_file(final_results)
